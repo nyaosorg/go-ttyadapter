@@ -11,7 +11,7 @@ import (
 
 	"github.com/nyaosorg/go-ttyadapter"
 	"github.com/nyaosorg/go-ttyadapter/auto"
-	"github.com/nyaosorg/go-ttyadapter/tty8"
+	"github.com/nyaosorg/go-ttyadapter/tty8pe"
 )
 
 var flagInterval = flag.Uint("interval", 0, "delay (seconds) between simulated key inputs")
@@ -21,8 +21,8 @@ func run(operations []string) error {
 
 	// If command-line arguments are given, simulate key inputs using auto.Pilot.
 	if len(operations) > 0 {
-		// Append ESC to end to exit automatically.
-		operations = append(operations, "\x1B")
+		// Append Ctrl-G to end to exit automatically.
+		operations = append(operations, "\x07")
 		var hook func(*auto.Pilot) error
 		if *flagInterval > 0 {
 			hook = func(_ *auto.Pilot) error {
@@ -32,7 +32,7 @@ func run(operations []string) error {
 		}
 		tty = &auto.Pilot{Text: operations, OnGetKey: hook}
 	} else {
-		tty = &tty8.Tty{}
+		tty = &tty8pe.Tty{}
 	}
 
 	if err := tty.Open(nil); err != nil {
@@ -45,7 +45,7 @@ func run(operations []string) error {
 		if err != nil {
 			return err
 		}
-		if key == "\x1B" {
+		if key == "\x07" {
 			return nil
 		}
 		// Show typed key, converting ESC to literal name.
