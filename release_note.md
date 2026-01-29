@@ -1,3 +1,7 @@
+v0.3.0
+------
+Jan 29, 2026
+
 - Add `tty8pe` and `tty10pe` packages, which treat the Escape key as a prefix to prevent misbehavior from split ESC sequences.
 
 v0.2.0
