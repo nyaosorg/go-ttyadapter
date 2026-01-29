@@ -23,6 +23,16 @@ Features
 - Lightweight wrappers (not a pure-zero-dependency package)  
   This module provides small adapters over existing terminal libraries rather than reimplementing low-level terminal handling. Backends depend on [github.com/mattn/go-tty][go-tty] or [golang.org/x/term][xterm] as appropriate.
 
+- Optional "pending escape" backends for robust key sequence handling  
+  Some terminal environments may deliver escape sequences (such as arrow keys) in multiple chunks.  
+  To handle this reliably, the package provides alternative backends that treat `ESC` as a prefix key rather than a standalone input.
+
+  - `tty8pe` → variant of `tty8` with pending-escape handling  
+    (`ESC` is interpreted as a prefix, similar to traditional UNIX terminals)
+  - `tty10pe` → planned variant of `tty10` with the same behavior
+
+  These backends avoid ambiguity between standalone `ESC` and escape sequences, at the cost of not supporting `ESC` as an independent key.
+
 Example
 -------
 
