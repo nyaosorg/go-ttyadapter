@@ -84,6 +84,8 @@ func (M *Tty) GetKey() (string, error) {
 			"\x1B[18", "\x1B[1;", "\x1B[1;5", "\x1B[2", "\x1B[20",
 			"\x1B[21", "\x1B[23", "\x1B[24", "\x1B[3", "\x1B[5",
 			"\x1B[5;", "\x1B[5;5", "\x1B[6", "\x1B[6;", "\x1B[6;5", "\x1B[O":
+		case "\x1B\x1B":
+			sequence = "\x1B"
 		default:
 			return sequence, nil
 		}
