@@ -23,6 +23,16 @@ Features
 - Lightweight wrappers (not a pure-zero-dependency package)  
   This module provides small adapters over existing terminal libraries rather than reimplementing low-level terminal handling. Backends depend on [github.com/mattn/go-tty][go-tty] or [golang.org/x/term][xterm] as appropriate.
 
+- Optional "pending escape" backends for robust key sequence handling  
+  Some terminal environments may deliver escape sequences (such as arrow keys) in multiple chunks.  
+  To handle this reliably, the package provides alternative backends that treat `ESC` as a prefix key rather than a standalone input.
+
+  - `tty8pe` → variant of `tty8` with pending-escape handling  
+    (`ESC` is interpreted as a prefix, similar to traditional UNIX terminals)
+  - `tty10pe` → planned variant of `tty10` with the same behavior
+
+  These backends avoid ambiguity between standalone `ESC` and escape sequences, at the cost of not supporting `ESC` as an independent key.
+
 Example
 -------
 
@@ -38,7 +48,7 @@ import (
 
     "github.com/nyaosorg/go-ttyadapter"
     "github.com/nyaosorg/go-ttyadapter/auto"
-    "github.com/nyaosorg/go-ttyadapter/tty8"
+    "github.com/nyaosorg/go-ttyadapter/tty8pe"
 )
 
 var flagInterval = flag.Uint("interval", 0, "delay (seconds) between simulated key inputs")
@@ -48,8 +58,8 @@ func run(operations []string) error {
 
     // If command-line arguments are given, simulate key inputs using auto.Pilot.
     if len(operations) > 0 {
-        // Append ESC to end to exit automatically.
-        operations = append(operations, "\x1B")
+        // Append Ctrl-G to end to exit automatically.
+        operations = append(operations, "\x07")
         var hook func(*auto.Pilot) error
         if *flagInterval > 0 {
             hook = func(_ *auto.Pilot) error {
@@ -59,7 +69,7 @@ func run(operations []string) error {
         }
         tty = &auto.Pilot{Text: operations, OnGetKey: hook}
     } else {
-        tty = &tty8.Tty{}
+        tty = &tty8pe.Tty{}
     }
 
     if err := tty.Open(nil); err != nil {
@@ -72,7 +82,7 @@ func run(operations []string) error {
         if err != nil {
             return err
         }
-        if key == "\x1B" {
+        if key == "\x07" {
             return nil
         }
         // Show typed key, converting ESC to literal name.
@@ -89,11 +99,11 @@ func main() {
 }
 ```
 
-This example prints pressed keys enclosed in &lt; &gt; and exits when ESC is pressed.
+This example prints pressed keys enclosed in &lt; &gt; and exits when Ctrl-G is pressed.
 The demo below shows two modes in sequence:
 
 - Simulated input using auto.Pilot (numbers 1–5 are automatically typed)
-- Manual input where actual keypresses (e.g. arrow keys, ESC) are captured from the terminal
+- Manual input where actual keypresses (e.g. arrow keys) are captured from the terminal
 
 ![demo.gif](demo.gif)
 
