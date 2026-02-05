@@ -15,7 +15,14 @@ import (
 // handling.
 type Tty struct {
 	*tty.TTY
-	buf []string
+	buf      []string
+	OnPrefix func(string)
+}
+
+func (m *Tty) SetOnPrefix(f func(string)) (original func(string)) {
+	original = m.OnPrefix
+	m.OnPrefix = f
+	return
 }
 
 // Open calls go-tty's Open method to initialize the Tty instance.
@@ -55,7 +62,7 @@ func (m *Tty) Open(onResize func(width, height int)) error {
 func (m *Tty) GetKey() (string, error) {
 	if len(m.buf) <= 0 {
 		var err error
-		m.buf, err = getKeys(m.TTY)
+		m.buf, err = getKeys(m.TTY, m.OnPrefix)
 		if err != nil || len(m.buf) <= 0 {
 			return "", err
 		}

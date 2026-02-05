@@ -32,7 +32,7 @@ func readRune(tty xTty) (rune, error) {
 	}
 }
 
-func getOneKey(tty xTty) (string, error) {
+func getOneKey(tty xTty, onPrefix func(string)) (string, error) {
 	var sequence string
 	for {
 		r, err := readRune(tty)
@@ -45,6 +45,9 @@ func getOneKey(tty xTty) (string, error) {
 			"\x1B[18", "\x1B[1;", "\x1B[1;5", "\x1B[2", "\x1B[20",
 			"\x1B[21", "\x1B[23", "\x1B[24", "\x1B[3", "\x1B[5",
 			"\x1B[5;", "\x1B[5;5", "\x1B[6", "\x1B[6;", "\x1B[6;5", "\x1B[O":
+			if onPrefix != nil {
+				onPrefix(sequence)
+			}
 		case "\x1B\x1B":
 			sequence = "\x1B"
 		default:
@@ -53,7 +56,7 @@ func getOneKey(tty xTty) (string, error) {
 	}
 }
 
-func getKeys(tty xTty) ([]string, error) {
+func getKeys(tty xTty, onPrefix func(string)) ([]string, error) {
 	clean, err := tty.Raw()
 	if err != nil {
 		return nil, err
@@ -63,7 +66,7 @@ func getKeys(tty xTty) ([]string, error) {
 	keys := []string{}
 
 	for {
-		key1, err := getOneKey(tty)
+		key1, err := getOneKey(tty, onPrefix)
 		if err != nil {
 			return nil, err
 		}
