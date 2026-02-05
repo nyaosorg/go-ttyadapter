@@ -1,3 +1,5 @@
+- tty8pe.Tty: Add optional prefix hook (OnPrefix, SetOnPrefix) for experimental input handling (#4)
+
 v0.3.0
 ------
 Jan 29, 2026
