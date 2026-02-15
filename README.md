@@ -3,6 +3,22 @@ go-ttyadapter
 
 This package provides an abstraction layer for reading keyboard input from terminal devices.
 
+The Core Interface
+------------------
+
+All adapters implement the following `Tty` interface:
+
+```go
+type Tty interface {
+    Open(onResize func(int, int)) error
+    GetKey() (string, error)
+    Size() (int, int, error)
+    Close() error
+}
+```
+
+This allows you to write terminal-interactive applications that are independent of specific backend implementations, making your code easily testable with pseudo-terminals.
+
 Features
 --------
 
