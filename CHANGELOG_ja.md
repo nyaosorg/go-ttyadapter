@@ -1,4 +1,9 @@
+Changelog
+=========
+( [English](./CHANGELOG.md) | Japanese )
+
 - tty8pe.Tty: 試験的な入力対応のため、オプションのプリフィックス用フック(OnPrefix, SetOnPrefix) を追加 (#4)
+- リリースノートのファイルを CHANGELOG.md と CHANGELOG\_ja.md へリネーム (#7)
 
 v0.3.0
 ------

@@ -1,4 +1,9 @@
+Changelog
+=========
+( English | [Japanese](./CHANGELOG_ja.md) )
+
 - tty8pe.Tty: Add optional prefix hook (OnPrefix, SetOnPrefix) for experimental input handling (#4)
+- Rename release note files to CHANGELOG.md and CHANGELOG\_ja.md (#7)
 
 v0.3.0
 ------
