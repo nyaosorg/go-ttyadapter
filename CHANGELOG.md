@@ -1,3 +1,7 @@
+Changelog
+=========
+( English | [Japanese](./CHANGELOG_ja.md) )
+
 - tty8pe.Tty: Add optional prefix hook (OnPrefix, SetOnPrefix) for experimental input handling (#4)
 
 v0.3.0

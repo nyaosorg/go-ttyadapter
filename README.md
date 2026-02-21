@@ -126,11 +126,11 @@ The demo below shows two modes in sequence:
 [go-tty]: https://github.com/mattn/go-tty
 [xterm]: https://pkg.go.dev/golang.org/x/term
 
-Release notes
--------------
+Changelog
+---------
 
-- [English](release_note.md)
-- [Japanese](release_note_ja.md)
+- [English](CHANGELOG.md)
+- [Japanese](CHANGELOG_ja.md)
 
 License
 -------
