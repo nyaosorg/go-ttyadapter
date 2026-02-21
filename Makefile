@@ -32,6 +32,9 @@ $(SUPPORTGO):
 	$(SUPPORTGO) download
 
 release:
-	pwsh -Command "latest-notes.ps1" | gh release create -d --notes-file - -t $(VERSION) $(VERSION)
+	$(GO) run github.com/hymkor/latest-notes@latest | gh release create -d --notes-file - -t $(VERSION) $(VERSION)
+
+dry-release:
+	$(GO) run github.com/hymkor/latest-notes@latest
 
 .PHONY: all demo test release
