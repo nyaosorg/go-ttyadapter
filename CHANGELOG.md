@@ -2,7 +2,7 @@ Changelog
 =========
 ( English | [Japanese](./CHANGELOG_ja.md) )
 
-- tty8pe.Tty: Add optional prefix hook (OnPrefix, SetOnPrefix) for experimental input handling (#4)
+- `tty8pe.Tty` and `tty10pe.Tty`: Add optional prefix hook (`OnPrefix`, `SetOnPrefix`) for experimental input handling (#4, #9)
 - Rename release note files to CHANGELOG.md and CHANGELOG\_ja.md (#7)
 - Improve terminal resize detection on UNIX by using SIGWINCH instead of polling (#8)
 
