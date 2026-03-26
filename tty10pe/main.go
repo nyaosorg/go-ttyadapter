@@ -6,6 +6,7 @@ import (
 
 	"golang.org/x/term"
 
+	"github.com/nyaosorg/go-ttyadapter/internal/virtualterminal"
 	"github.com/nyaosorg/go-ttyadapter/internal/winch"
 )
 
@@ -19,7 +20,7 @@ func (M *Tty) Open(onResize func(int, int)) error {
 	var err error
 
 	stdin := int(os.Stdin.Fd())
-	M.disable, err = enable(stdin)
+	M.disable, err = virtualterminal.Enable(stdin)
 	if err != nil {
 		return err
 	}

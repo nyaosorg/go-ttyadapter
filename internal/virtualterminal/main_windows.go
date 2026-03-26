@@ -1,7 +1,7 @@
 //go:build windows
 // +build windows
 
-package tty10
+package virtualterminal
 
 import (
 	"golang.org/x/sys/windows"
