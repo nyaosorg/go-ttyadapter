@@ -2,15 +2,17 @@ package tty10
 
 import (
 	"os"
-	"time"
 	"unicode/utf8"
 
 	"golang.org/x/term"
+
+	"github.com/nyaosorg/go-ttyadapter/internal/winch"
+	"github.com/nyaosorg/go-ttyadapter/internal/virtualterminal"
 )
 
 type Tty struct {
-	done    chan struct{}
 	disable func()
+	cancel  func()
 	buf     []byte
 }
 
@@ -18,34 +20,14 @@ func (M *Tty) Open(onResize func(int, int)) error {
 	var err error
 
 	stdin := int(os.Stdin.Fd())
-	M.disable, err = enable(stdin)
+	M.disable, err = virtualterminal.Enable(stdin)
 	if err != nil {
 		return err
 	}
 
 	if onResize != nil {
-		w, h, err := M.Size()
-		if err != nil {
-			return err
-		}
-		M.done = make(chan struct{})
-		go func(lastw, lasth int) {
-			ticker := time.NewTicker(time.Second)
-			for {
-				select {
-				case <-M.done:
-					ticker.Stop()
-					return
-				case <-ticker.C:
-					w, h, err := M.Size()
-					if err == nil && (w != lastw || h != lasth) {
-						onResize(w, h)
-						lastw = w
-						lasth = h
-					}
-				}
-			}
-		}(w, h)
+		M.cancel, err = winch.Notice(onResize)
+		return err
 	}
 	return nil
 }
@@ -87,10 +69,9 @@ func (M *Tty) GetKey() (string, error) {
 }
 
 func (M *Tty) Close() error {
-	if M.done != nil {
-		M.done <- struct{}{}
-		close(M.done)
-		M.done = nil
+	if M.cancel != nil {
+		M.cancel()
+		M.cancel = nil
 	}
 	if M.disable != nil {
 		M.disable()

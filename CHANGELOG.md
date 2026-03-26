@@ -4,6 +4,7 @@ Changelog
 
 - tty8pe.Tty: Add optional prefix hook (OnPrefix, SetOnPrefix) for experimental input handling (#4)
 - Rename release note files to CHANGELOG.md and CHANGELOG\_ja.md (#7)
+- Improve terminal resize detection on UNIX by using SIGWINCH instead of polling (#8)
 
 v0.3.0
 ------

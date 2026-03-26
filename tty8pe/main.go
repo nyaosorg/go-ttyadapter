@@ -2,6 +2,7 @@ package tty8pe
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/mattn/go-tty"
 )
@@ -15,6 +16,7 @@ import (
 // handling.
 type Tty struct {
 	*tty.TTY
+	wg       sync.WaitGroup
 	buf      []string
 	OnPrefix func(string)
 }
@@ -41,6 +43,7 @@ func (m *Tty) Open(onResize func(width, height int)) error {
 	}
 	if onResize != nil {
 		ws := m.TTY.SIGWINCH()
+		m.wg.Add(1)
 		go func(lastw, lasth int) {
 			for wh := range ws {
 				if lastw != wh.W || lasth != wh.H {
@@ -49,6 +52,7 @@ func (m *Tty) Open(onResize func(width, height int)) error {
 					lasth = wh.H
 				}
 			}
+			m.wg.Done()
 		}(_lastw, _lasth)
 	}
 	return nil
@@ -81,5 +85,6 @@ func (m *Tty) Close() error {
 		m.TTY.Close()
 		m.TTY = nil
 	}
+	m.wg.Wait()
 	return nil
 }
