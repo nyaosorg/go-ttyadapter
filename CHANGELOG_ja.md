@@ -2,7 +2,7 @@ Changelog
 =========
 ( [English](./CHANGELOG.md) | Japanese )
 
-- tty8pe.Tty: 試験的な入力対応のため、オプションのプリフィックス用フック(OnPrefix, SetOnPrefix) を追加 (#4)
+- `tty8pe.Tty`, `tty10pe.Tty`: 試験的な入力対応のため、オプションのプリフィックス用フック(`OnPrefix`, `SetOnPrefix`) を追加 (#4, #9)
 - リリースノートのファイルを CHANGELOG.md と CHANGELOG\_ja.md へリネーム (#7)
 - UNIX系OSでの端末サイズ変更の検出に、ポーリングではなく、SIGWINCH を用いるようにした (#8)
 

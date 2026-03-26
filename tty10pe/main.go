@@ -11,9 +11,16 @@ import (
 )
 
 type Tty struct {
-	disable func()
-	cancel  func()
-	buf     []byte
+	disable  func()
+	cancel   func()
+	buf      []byte
+	OnPrefix func(string)
+}
+
+func (m *Tty) SetOnPrefix(f func(string)) (original func(string)) {
+	original = m.OnPrefix
+	m.OnPrefix = f
+	return
 }
 
 func (M *Tty) Open(onResize func(int, int)) error {
@@ -65,6 +72,9 @@ func (M *Tty) GetKey() (string, error) {
 			"\x1B[18", "\x1B[1;", "\x1B[1;5", "\x1B[2", "\x1B[20",
 			"\x1B[21", "\x1B[23", "\x1B[24", "\x1B[3", "\x1B[5",
 			"\x1B[5;", "\x1B[5;5", "\x1B[6", "\x1B[6;", "\x1B[6;5", "\x1B[O":
+			if M.OnPrefix != nil {
+				M.OnPrefix(sequence)
+			}
 		case "\x1B\x1B":
 			sequence = "\x1B"
 		default:
