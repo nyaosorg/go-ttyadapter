@@ -3,6 +3,7 @@ Changelog
 ( English | [Japanese](./CHANGELOG_ja.md) )
 
 - auto.Pilot.Size() is now safe when neither Open is called nor Width/Height are explicitly initialized; it falls back to a default size (80,24,nil) instead of returning (0,0,nil).
+- New `ttyhook` subpackage to wrap `Tty` and intercept `GetKey` calls. (#11)
 
 v0.4.0
 ------
