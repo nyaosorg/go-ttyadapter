@@ -2,6 +2,8 @@ Changelog
 =========
 ( [English](./CHANGELOG.md) | Japanese )
 
+- 明示的な初期化、もしくは Open なしに auto.Pilot.Size() を呼び出しても (0,0,nil) を返さないようにした。(80,24,nil) を返すようになった。
+
 v0.4.0
 ------
 Mar 27, 2026

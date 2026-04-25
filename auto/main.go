@@ -12,12 +12,6 @@ type Pilot struct {
 }
 
 func (p *Pilot) Open(func(int, int)) error {
-	if p.Width <= 0 {
-		p.Width = 80
-	}
-	if p.Height <= 0 {
-		p.Height = 24
-	}
 	return nil
 }
 
@@ -36,6 +30,12 @@ func (ap *Pilot) GetKey() (string, error) {
 }
 
 func (p *Pilot) Size() (int, int, error) {
+	if p.Width <= 0 {
+		p.Width = 80
+	}
+	if p.Height <= 0 {
+		p.Height = 24
+	}
 	return p.Width, p.Height, nil
 }
 
