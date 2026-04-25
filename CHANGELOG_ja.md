@@ -3,6 +3,7 @@ Changelog
 ( [English](./CHANGELOG.md) | Japanese )
 
 - 明示的な初期化、もしくは Open なしに auto.Pilot.Size() を呼び出しても (0,0,nil) を返さないようにした。(80,24,nil) を返すようになった。
+- `Tty` をラッピングし、`GetKey` を横取りできる新パッケージ `ttyhook` を追加 (#11)
 
 v0.4.0
 ------
