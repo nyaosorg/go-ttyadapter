@@ -1,10 +1,9 @@
 package tty8pe
 
 import (
-	"fmt"
-	"sync"
-
 	"github.com/mattn/go-tty/v2"
+
+	"github.com/nyaosorg/go-ttyadapter/internal/winch8"
 )
 
 // Tty is a wrapper around github.com/mattn/go-tty.
@@ -16,9 +15,9 @@ import (
 // handling.
 type Tty struct {
 	*tty.TTY
-	wg       sync.WaitGroup
-	buf      []string
-	OnPrefix func(string)
+	stopNotice func()
+	buf        []string
+	OnPrefix   func(string)
 }
 
 func (m *Tty) SetOnPrefix(f func(string)) (original func(string)) {
@@ -35,27 +34,10 @@ func (m *Tty) Open(onResize func(width, height int)) error {
 	var err error
 	m.TTY, err = tty.Open()
 	if err != nil {
-		return fmt.Errorf("go-tty.Open: %w", err)
+		return err
 	}
-	_lastw, _lasth, err := m.TTY.Size()
-	if err != nil {
-		return fmt.Errorf("go-tty.Size: %w", err)
-	}
-	if onResize != nil {
-		ws := m.TTY.SIGWINCH()
-		m.wg.Add(1)
-		go func(lastw, lasth int) {
-			for wh := range ws {
-				if lastw != wh.W || lasth != wh.H {
-					onResize(wh.W, wh.H)
-					lastw = wh.W
-					lasth = wh.H
-				}
-			}
-			m.wg.Done()
-		}(_lastw, _lasth)
-	}
-	return nil
+	m.stopNotice, err = winch8.Notice(m.TTY, onResize)
+	return err
 }
 
 // GetKey switches the terminal to raw mode and reads a single key input.
@@ -85,6 +67,9 @@ func (m *Tty) Close() error {
 		m.TTY.Close()
 		m.TTY = nil
 	}
-	m.wg.Wait()
+	if m.stopNotice != nil {
+		m.stopNotice()
+		m.stopNotice = nil
+	}
 	return nil
 }
