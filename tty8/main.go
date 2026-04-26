@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/mattn/go-tty"
+	"github.com/mattn/go-tty/v2"
 )
 
 // Tty is a wrapper around github.com/mattn/go-tty.
