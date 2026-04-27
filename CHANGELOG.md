@@ -2,6 +2,8 @@ Changelog
 =========
 ( English | [Japanese](./CHANGELOG_ja.md) )
 
+- Update github.com/mattn/go-tty to v2.0.0 and adapt to the API changes (#13)
+
 v0.5.0
 ------
 Apr 26, 2026
