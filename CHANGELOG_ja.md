@@ -2,7 +2,12 @@ Changelog
 =========
 ( [English](./CHANGELOG.md) | Japanese )
 
+v0.6.0
+------
+Apr 27, 2026
+
 - github.com/mattn/go-tty を v2.0.0 へ更新 (#13)
+- UNIX系で "tty10", "tty10pe" 使用時に "a" がデバッグ出力されてしまう問題を修正
 
 v0.5.0
 ------

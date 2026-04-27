@@ -2,7 +2,12 @@ Changelog
 =========
 ( English | [Japanese](./CHANGELOG_ja.md) )
 
+v0.6.0
+------
+Apr 27, 2026
+
 - Update github.com/mattn/go-tty to v2.0.0 and adapt to the API changes (#13)
+- Remove `println("a")` from "tty10" and "tty10pe" on UNIX systems.
 
 v0.5.0
 ------
