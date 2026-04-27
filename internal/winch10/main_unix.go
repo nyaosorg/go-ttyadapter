@@ -17,7 +17,6 @@ func notice(onResize func(int, int)) (func(), error) {
 
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, unix.SIGWINCH)
-	println("a")
 
 	wg.Add(1)
 	go func() {
