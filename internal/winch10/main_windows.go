@@ -1,41 +1,37 @@
-//go:build !windows
-
-package winch
+package winch10
 
 import (
 	"context"
-	"os"
-	"os/signal"
 	"sync"
-
-	"golang.org/x/sys/unix"
+	"time"
 )
 
 func notice(onResize func(int, int)) (func(), error) {
+	w, h, err := getSize()
+	if err != nil {
+		return nil, err
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 	var wg sync.WaitGroup
-
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, unix.SIGWINCH)
-	println("a")
-
 	wg.Add(1)
-	go func() {
+	go func(lastw, lasth int) {
+		ticker := time.NewTicker(time.Second)
 		for {
 			select {
 			case <-ctx.Done():
-				signal.Stop(ch)
-				close(ch)
+				ticker.Stop()
 				wg.Done()
 				return
-			case <-ch:
+			case <-ticker.C:
 				w, h, err := getSize()
-				if err == nil {
+				if err == nil && (w != lastw || h != lasth) {
 					onResize(w, h)
+					lastw = w
+					lasth = h
 				}
 			}
 		}
-	}()
+	}(w, h)
 
 	return func() {
 		cancel()
