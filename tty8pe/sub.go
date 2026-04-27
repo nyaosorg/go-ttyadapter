@@ -1,41 +1,15 @@
 package tty8pe
 
 import (
-	"unicode/utf16"
+	"github.com/mattn/go-tty/v2"
+
+	"github.com/nyaosorg/go-ttyadapter/internal/unsurrogate"
 )
 
-// xTty is the interface of tty to use GetKey function.
-type xTty interface {
-	Raw() (func() error, error)
-	ReadRune() (rune, int, error)
-	Buffered() bool
-}
-
-func readRune(tty xTty) (rune, error) {
-	var surrogated rune = 0
-	for {
-		r, _, err := tty.ReadRune()
-		if err != nil {
-			return 0, err
-		}
-		if r == 0 {
-			continue
-		}
-		if surrogated > 0 {
-			return utf16.DecodeRune(surrogated, r), nil
-		} else if !utf16.IsSurrogate(r) {
-			return r, nil
-		} else {
-			// surrogate pair first word.
-			surrogated = r
-		}
-	}
-}
-
-func getOneKey(tty xTty, onPrefix func(string)) (string, error) {
+func getOneKey(tty *tty.TTY, onPrefix func(string)) (string, error) {
 	var sequence string
 	for {
-		r, err := readRune(tty)
+		r, _, err := unsurrogate.ReadRune(tty.ReadRune)
 		if err != nil {
 			return "", err
 		}
@@ -56,7 +30,7 @@ func getOneKey(tty xTty, onPrefix func(string)) (string, error) {
 	}
 }
 
-func getKeys(tty xTty, onPrefix func(string)) ([]string, error) {
+func getKeys(tty *tty.TTY, onPrefix func(string)) ([]string, error) {
 	clean, err := tty.Raw()
 	if err != nil {
 		return nil, err
