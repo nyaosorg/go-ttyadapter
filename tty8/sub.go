@@ -8,7 +8,7 @@ import (
 // xTty is the interface of tty to use GetKey function.
 type xTty interface {
 	Raw() (func() error, error)
-	ReadRune() (rune, error)
+	ReadRune() (rune, int, error)
 	Buffered() bool
 }
 
@@ -17,7 +17,7 @@ func getOneKey(tty xTty) (string, error) {
 	escape := false
 	var surrogated rune = 0
 	for {
-		r, err := tty.ReadRune()
+		r, _, err := tty.ReadRune()
 		if err != nil {
 			return "", err
 		}
