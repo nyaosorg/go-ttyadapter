@@ -48,24 +48,20 @@ func (M *Tty) getKey() ([]byte, error) {
 	return buffer[:n], nil
 }
 
-func (M *Tty) GetKey() (string, error) {
+func (M *Tty) GetKey() (key string, err error) {
 	if len(M.buf) <= 0 {
-		var err error
 		M.buf, err = M.getKey()
 		if err != nil || len(M.buf) <= 0 {
-			return "", err
+			return
 		}
 	}
-	var result string
 	r, size := utf8.DecodeRune(M.buf)
 	if r == '\x1B' {
-		result = string(M.buf)
-		M.buf = nil
+		key, M.buf = string(M.buf), nil
 	} else {
-		result = string(M.buf[:size])
-		M.buf = M.buf[size:]
+		key, M.buf = string(M.buf[:size]), M.buf[size:]
 	}
-	return result, nil
+	return
 }
 
 func (M *Tty) Close() error {

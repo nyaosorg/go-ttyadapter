@@ -54,31 +54,29 @@ func (M *Tty) getKey() ([]byte, error) {
 	return buffer[:n], nil
 }
 
-func (M *Tty) GetKey() (string, error) {
-	var sequence string
+func (M *Tty) GetKey() (key string, err error) {
 	for {
 		if len(M.buf) <= 0 {
-			var err error
 			M.buf, err = M.getKey()
 			if err != nil || len(M.buf) <= 0 {
-				return "", err
+				return
 			}
 		}
 		_, size := utf8.DecodeRune(M.buf)
-		sequence += string(M.buf[:size])
+		key += string(M.buf[:size])
 		M.buf = M.buf[size:]
-		switch sequence {
+		switch key {
 		case "\x1B", "\x1B[", "\x1B[1", "\x1B[15", "\x1B[16", "\x1B[17",
 			"\x1B[18", "\x1B[1;", "\x1B[1;5", "\x1B[2", "\x1B[20",
 			"\x1B[21", "\x1B[23", "\x1B[24", "\x1B[3", "\x1B[5",
 			"\x1B[5;", "\x1B[5;5", "\x1B[6", "\x1B[6;", "\x1B[6;5", "\x1B[O":
 			if M.OnPrefix != nil {
-				M.OnPrefix(sequence)
+				M.OnPrefix(key)
 			}
 		case "\x1B\x1B":
-			sequence = "\x1B"
+			key = "\x1B"
 		default:
-			return sequence, nil
+			return
 		}
 	}
 }

@@ -38,17 +38,15 @@ func (m *Tty) Open(onResize func(width, height int)) error {
 // as a string. Any unread input is buffered internally and returned on
 // subsequent calls. After processing, the terminal is restored to cooked
 // mode.
-func (m *Tty) GetKey() (string, error) {
+func (m *Tty) GetKey() (key string, err error) {
 	if len(m.buf) <= 0 {
-		var err error
 		m.buf, err = getKeys(m.TTY)
 		if err != nil || len(m.buf) <= 0 {
-			return "", err
+			return
 		}
 	}
-	var top string
-	top, m.buf = m.buf[0], m.buf[1:]
-	return top, nil
+	key, m.buf = m.buf[0], m.buf[1:]
+	return
 }
 
 // Close calls go-tty's `Close` method to shut down the Tty instance.
