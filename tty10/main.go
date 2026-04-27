@@ -6,8 +6,8 @@ import (
 
 	"golang.org/x/term"
 
-	"github.com/nyaosorg/go-ttyadapter/internal/winch"
 	"github.com/nyaosorg/go-ttyadapter/internal/virtualterminal"
+	"github.com/nyaosorg/go-ttyadapter/internal/winch10"
 )
 
 type Tty struct {
@@ -26,7 +26,7 @@ func (M *Tty) Open(onResize func(int, int)) error {
 	}
 
 	if onResize != nil {
-		M.cancel, err = winch.Notice(onResize)
+		M.cancel, err = winch10.Notice(onResize)
 		return err
 	}
 	return nil

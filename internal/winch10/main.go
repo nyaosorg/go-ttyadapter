@@ -1,4 +1,4 @@
-package winch
+package winch10
 
 import (
 	"os"
