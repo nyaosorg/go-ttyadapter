@@ -2,6 +2,8 @@ Changelog
 =========
 ( English | [Japanese](./CHANGELOG_ja.md) )
 
+- Fix: "tty10" and "tty10pe" did not work when standard input was redirected (#16)
+
 v0.6.0
 ------
 Apr 27, 2026
