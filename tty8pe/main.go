@@ -3,6 +3,7 @@ package tty8pe
 import (
 	"github.com/mattn/go-tty/v2"
 
+	"github.com/nyaosorg/go-ttyadapter/internal/unsurrogate"
 	"github.com/nyaosorg/go-ttyadapter/internal/winch8"
 )
 
@@ -20,9 +21,9 @@ type Tty struct {
 	OnPrefix   func(string)
 }
 
-func (m *Tty) SetOnPrefix(f func(string)) (original func(string)) {
-	original = m.OnPrefix
-	m.OnPrefix = f
+func (tt *Tty) SetOnPrefix(f func(string)) (original func(string)) {
+	original = tt.OnPrefix
+	tt.OnPrefix = f
 	return
 }
 
@@ -30,14 +31,43 @@ func (m *Tty) SetOnPrefix(f func(string)) (original func(string)) {
 // It also starts a goroutine that listens for terminal resize notifications.
 // The goroutine receives events from go-tty's SIGWINCH channel and,
 // if onResize is not nil, invokes the provided callback function.
-func (m *Tty) Open(onResize func(width, height int)) error {
+func (tt *Tty) Open(onResize func(width, height int)) error {
 	var err error
-	m.TTY, err = tty.Open()
+	tt.TTY, err = tty.Open()
 	if err != nil {
 		return err
 	}
-	m.stopNotice, err = winch8.Notice(m.TTY, onResize)
+	tt.stopNotice, err = winch8.Notice(tt.TTY, onResize)
 	return err
+}
+
+func getKeys(tty *tty.TTY, onPrefix func(string)) ([]string, error) {
+	keys := []string{}
+
+	var key string
+	for {
+		r, _, err := unsurrogate.ReadRune(tty.ReadRune)
+		if err != nil {
+			return nil, err
+		}
+		key += string(r)
+		switch key {
+		case "\x1B", "\x1B[", "\x1B[1", "\x1B[15", "\x1B[16", "\x1B[17",
+			"\x1B[18", "\x1B[1;", "\x1B[1;5", "\x1B[2", "\x1B[20",
+			"\x1B[21", "\x1B[23", "\x1B[24", "\x1B[3", "\x1B[5",
+			"\x1B[5;", "\x1B[5;5", "\x1B[6", "\x1B[6;", "\x1B[6;5", "\x1B[O":
+			if onPrefix != nil {
+				onPrefix(key)
+			}
+		case "\x1B\x1B":
+			key = "\x1B"
+		default:
+			keys = append(keys, key)
+			if !tty.Buffered() {
+				return keys, nil
+			}
+		}
+	}
 }
 
 // GetKey switches the terminal to raw mode and reads a single key input.
@@ -45,14 +75,20 @@ func (m *Tty) Open(onResize func(width, height int)) error {
 // as a string. Any unread input is buffered internally and returned on
 // subsequent calls. After processing, the terminal is restored to cooked
 // mode.
-func (m *Tty) GetKey() (key string, err error) {
-	if len(m.buf) <= 0 {
-		m.buf, err = getKeys(m.TTY, m.OnPrefix)
-		if err != nil || len(m.buf) <= 0 {
+func (tt *Tty) GetKey() (key string, err error) {
+	if len(tt.buf) <= 0 {
+		clean, _err := tt.TTY.Raw()
+		if err != nil {
+			return "", _err
+		}
+		defer clean()
+
+		tt.buf, err = getKeys(tt.TTY, tt.OnPrefix)
+		if err != nil || len(tt.buf) <= 0 {
 			return
 		}
 	}
-	key, m.buf = m.buf[0], m.buf[1:]
+	key, tt.buf = tt.buf[0], tt.buf[1:]
 	return
 }
 
@@ -60,14 +96,14 @@ func (m *Tty) GetKey() (key string, err error) {
 // It clears internal references (by overwriting them with nil) to prevent
 // reuse. Since go-tty closes the SIGWINCH channel, the goroutine started
 // by Open detects the channel closure and terminates automatically.
-func (m *Tty) Close() error {
-	if m.TTY != nil {
-		m.TTY.Close()
-		m.TTY = nil
+func (tt *Tty) Close() error {
+	if tt.TTY != nil {
+		tt.TTY.Close()
+		tt.TTY = nil
 	}
-	if m.stopNotice != nil {
-		m.stopNotice()
-		m.stopNotice = nil
+	if tt.stopNotice != nil {
+		tt.stopNotice()
+		tt.stopNotice = nil
 	}
 	return nil
 }
