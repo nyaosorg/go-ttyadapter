@@ -2,6 +2,8 @@ Changelog
 =========
 ( [English](./CHANGELOG.md) | Japanese )
 
+- 標準入力がリダイレクトされている時、"tty10", "tty10pe" が機能しない不具合を修正 (#16)
+
 v0.6.0
 ------
 Apr 27, 2026
