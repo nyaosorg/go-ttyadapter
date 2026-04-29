@@ -6,76 +6,73 @@ import (
 
 	"golang.org/x/term"
 
+	"github.com/nyaosorg/go-ttyadapter/internal/device"
 	"github.com/nyaosorg/go-ttyadapter/internal/virtualterminal"
 	"github.com/nyaosorg/go-ttyadapter/internal/winch10"
 )
 
 type Tty struct {
+	devTty  *os.File
 	disable func()
 	cancel  func()
 	buf     []byte
 }
 
-func (M *Tty) Open(onResize func(int, int)) error {
+func (tt *Tty) fd() int {
+	return int(tt.devTty.Fd())
+}
+
+func (tt *Tty) Open(onResize func(int, int)) error {
 	var err error
 
-	stdin := int(os.Stdin.Fd())
-	M.disable, err = virtualterminal.Enable(stdin)
+	tt.devTty, err = os.OpenFile(device.TtyPath, os.O_RDWR, 0666)
+	if err != nil {
+		return err
+	}
+
+	tt.disable, err = virtualterminal.Enable(tt.fd())
 	if err != nil {
 		return err
 	}
 
 	if onResize != nil {
-		M.cancel, err = winch10.Notice(onResize)
+		tt.cancel, err = winch10.Notice(onResize)
 		return err
 	}
 	return nil
 }
 
-func (M *Tty) getKey() ([]byte, error) {
-	stdin := int(os.Stdin.Fd())
-	oldState, err := term.MakeRaw(stdin)
-	if err != nil {
-		return nil, err
-	}
-	defer term.Restore(stdin, oldState)
-
-	var buffer [1024]byte
-	n, err := os.Stdin.Read(buffer[:])
-	if err != nil {
-		return nil, err
-	}
-	return buffer[:n], nil
-}
-
-func (M *Tty) GetKey() (key string, err error) {
-	if len(M.buf) <= 0 {
-		M.buf, err = M.getKey()
-		if err != nil || len(M.buf) <= 0 {
+func (tt *Tty) GetKey() (key string, err error) {
+	if len(tt.buf) <= 0 {
+		tt.buf, err = device.ReadAllInRawMode(tt.devTty)
+		if err != nil || len(tt.buf) <= 0 {
 			return
 		}
 	}
-	r, size := utf8.DecodeRune(M.buf)
+	r, size := utf8.DecodeRune(tt.buf)
 	if r == '\x1B' {
-		key, M.buf = string(M.buf), nil
+		key, tt.buf = string(tt.buf), nil
 	} else {
-		key, M.buf = string(M.buf[:size]), M.buf[size:]
+		key, tt.buf = string(tt.buf[:size]), tt.buf[size:]
 	}
 	return
 }
 
-func (M *Tty) Close() error {
-	if M.cancel != nil {
-		M.cancel()
-		M.cancel = nil
+func (tt *Tty) Close() error {
+	if tt.cancel != nil {
+		tt.cancel()
+		tt.cancel = nil
 	}
-	if M.disable != nil {
-		M.disable()
-		M.disable = nil
+	if tt.disable != nil {
+		tt.disable()
+		tt.disable = nil
+	}
+	if tt.devTty != nil {
+		tt.devTty.Close()
 	}
 	return nil
 }
 
-func (M *Tty) Size() (int, int, error) {
+func (tt *Tty) Size() (int, int, error) {
 	return term.GetSize(int(os.Stderr.Fd()))
 }
