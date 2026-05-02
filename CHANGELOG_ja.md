@@ -2,6 +2,8 @@ Changelog
 =========
 ( [English](./CHANGELOG.md) | Japanese )
 
+- Go 1.20 以下の Windows では "tty8pe" , それ以外では "tty10pe" と等価となるサブパッケージ "fav" を用意 (#19)
+
 v0.6.1
 ------
 Apr 29, 2026
