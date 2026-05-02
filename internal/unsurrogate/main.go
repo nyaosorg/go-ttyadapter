@@ -2,24 +2,23 @@ package unsurrogate
 
 import (
 	"unicode/utf16"
-	"unicode/utf8"
 )
 
-func ReadRune(read func() (rune, int, error)) (rune, int, error) {
+func ReadRune(read func() (rune, error)) (rune, error) {
 	var surrogated rune = 0
 	for {
-		r, siz, err := read()
+		r, err := read()
 		if err != nil {
-			return 0, siz, err
+			return 0, err
 		}
 		if r == 0 {
 			continue
 		}
 		if surrogated > 0 {
 			r := utf16.DecodeRune(surrogated, r)
-			return r, utf8.RuneLen(r), nil
+			return r, nil
 		} else if !utf16.IsSurrogate(r) {
-			return r, siz, nil
+			return r, nil
 		} else {
 			// surrogate pair first word.
 			surrogated = r

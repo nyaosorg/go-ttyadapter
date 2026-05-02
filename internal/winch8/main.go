@@ -3,7 +3,7 @@ package winch8
 import (
 	"sync"
 
-	"github.com/mattn/go-tty/v2"
+	"github.com/mattn/go-tty"
 )
 
 func Notice(tt *tty.TTY, onResize func(w, h int)) (func(), error) {

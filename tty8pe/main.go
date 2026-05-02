@@ -1,7 +1,7 @@
 package tty8pe
 
 import (
-	"github.com/mattn/go-tty/v2"
+	"github.com/mattn/go-tty"
 
 	"github.com/nyaosorg/go-ttyadapter/internal/unsurrogate"
 	"github.com/nyaosorg/go-ttyadapter/internal/winch8"
@@ -46,7 +46,7 @@ func getKeys(tty *tty.TTY, onPrefix func(string)) ([]string, error) {
 
 	var key string
 	for {
-		r, _, err := unsurrogate.ReadRune(tty.ReadRune)
+		r, err := unsurrogate.ReadRune(tty.ReadRune)
 		if err != nil {
 			return nil, err
 		}
