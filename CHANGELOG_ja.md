@@ -2,6 +2,10 @@ Changelog
 =========
 ( [English](./CHANGELOG.md) | Japanese )
 
+v0.6.2
+------
+May 3, 2026
+
 - キー入力の待ち動作に変更があるようなので、go-tty を v0.0.7 へ固定 (#18)
 - Go 1.20 以下の Windows では "tty8pe" , それ以外では "tty10pe" と等価となるサブパッケージ "fav" を用意 (#19)
 
