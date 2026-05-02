@@ -2,6 +2,8 @@ Changelog
 =========
 ( [English](./CHANGELOG.md) | Japanese )
 
+- キー入力の待ち動作に変更があるようなので、go-tty を v0.0.7 へ固定 (#18)
+
 v0.6.1
 ------
 Apr 29, 2026

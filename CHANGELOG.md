@@ -2,6 +2,8 @@ Changelog
 =========
 ( English | [Japanese](./CHANGELOG_ja.md) )
 
+- Pin go-tty to v0.0.7 for stable blocking behavior (#18)
+
 v0.6.1
 ------
 Apr 29, 2026
