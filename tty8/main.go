@@ -3,7 +3,7 @@ package tty8
 import (
 	"strings"
 
-	"github.com/mattn/go-tty/v2"
+	"github.com/mattn/go-tty"
 
 	"github.com/nyaosorg/go-ttyadapter/internal/unsurrogate"
 	"github.com/nyaosorg/go-ttyadapter/internal/winch8"
@@ -42,7 +42,7 @@ func getKeys(tty *tty.TTY) ([]string, error) {
 	var buffer strings.Builder
 	escape := false
 	for {
-		r, _, err := unsurrogate.ReadRune(tty.ReadRune)
+		r, err := unsurrogate.ReadRune(tty.ReadRune)
 		if err != nil {
 			return nil, err
 		}

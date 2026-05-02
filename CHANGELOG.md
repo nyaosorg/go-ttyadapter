@@ -2,6 +2,7 @@ Changelog
 =========
 ( English | [Japanese](./CHANGELOG_ja.md) )
 
+- Pin go-tty to v0.0.7 for stable blocking behavior (#18)
 - Add a subpackage "fav" equivalent to "tty8pe" for Windows with Go 1.20 or earlier, "tty10pe" for others. (#19)
 
 v0.6.1
