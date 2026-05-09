@@ -1,4 +1,4 @@
-package winch8
+package tty8base
 
 import (
 	"sync"

@@ -6,7 +6,6 @@ import (
 	"github.com/mattn/go-tty"
 
 	"github.com/nyaosorg/go-ttyadapter/internal/tty8base"
-	"github.com/nyaosorg/go-ttyadapter/internal/winch8"
 )
 
 // Tty is a wrapper around github.com/mattn/go-tty.
@@ -32,7 +31,7 @@ func (tt *Tty) Open(onResize func(width, height int)) error {
 	if err != nil {
 		return err
 	}
-	tt.stopNotice, err = winch8.Notice(tt.TTY, onResize)
+	tt.stopNotice, err = tty8base.Notice(tt.TTY, onResize)
 	return err
 }
 
