@@ -7,6 +7,7 @@ Changelog
   - Allow safe re-open after Close
   - Prevent partial open state on Open failure
   - Make Open idempotent
+- Add IsOpen() to Tty interfaces and implementations (#25)
 
 v0.6.3
 ------

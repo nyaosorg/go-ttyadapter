@@ -20,6 +20,10 @@ func (tt *Tty) fd() int {
 	return int(tt.devTty.Fd())
 }
 
+func (tt *Tty) IsOpen() bool {
+	return tt.devTty != nil
+}
+
 func (tt *Tty) Open(onResize func(int, int)) (err error) {
 	defer func() {
 		if err != nil {

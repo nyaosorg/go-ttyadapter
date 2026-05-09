@@ -10,6 +10,7 @@ All adapters implement the following `Tty` interface:
 
 ```go
 type Tty interface {
+    IsOpen() bool
     Open(onResize func(int, int)) error
     GetKey() (string, error)
     Size() (int, int, error)

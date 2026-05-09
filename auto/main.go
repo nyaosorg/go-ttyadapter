@@ -11,6 +11,10 @@ type Pilot struct {
 	OnGetKey func(*Pilot) error
 }
 
+func (p *Pilot) IsOpen() bool {
+	return true
+}
+
 func (p *Pilot) Open(func(int, int)) error {
 	return nil
 }

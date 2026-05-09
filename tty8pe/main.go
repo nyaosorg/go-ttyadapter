@@ -26,6 +26,10 @@ func (tt *Tty) SetOnPrefix(f func(string)) (original func(string)) {
 	return
 }
 
+func (tt *Tty) IsOpen() bool {
+	return tt.TTY != nil
+}
+
 // Open calls go-tty's Open method to initialize the Tty instance.
 // It also starts a goroutine that listens for terminal resize notifications.
 // The goroutine receives events from go-tty's SIGWINCH channel and,
