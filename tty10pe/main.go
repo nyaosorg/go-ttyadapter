@@ -27,23 +27,31 @@ func (m *Tty) SetOnPrefix(f func(string)) (original func(string)) {
 	return
 }
 
-func (tt *Tty) Open(onResize func(int, int)) error {
-	var err error
+func (tt *Tty) Open(onResize func(int, int)) (err error) {
+	defer func() {
+		if err != nil {
+			tt.Close()
+		}
+	}()
 
-	tt.devTty, err = os.OpenFile(tty10base.TtyPath, os.O_RDWR, 0666)
-	if err != nil {
-		return err
+	if tt.devTty == nil {
+		tt.devTty, err = os.OpenFile(tty10base.TtyPath, os.O_RDWR, 0666)
+		if err != nil {
+			return
+		}
 	}
 
-	tt.disable, err = tty10base.EnableVirtualTerminal(tt.fd())
-	if err != nil {
-		return err
+	if tt.disable == nil {
+		tt.disable, err = tty10base.EnableVirtualTerminal(tt.fd())
+		if err != nil {
+			return
+		}
 	}
 	if onResize != nil {
 		tt.cancel, err = tty10base.Notice(onResize)
-		return err
+		return
 	}
-	return nil
+	return
 }
 
 func (tt *Tty) GetKey() (key string, err error) {
@@ -84,6 +92,7 @@ func (tt *Tty) Close() error {
 	}
 	if tt.devTty != nil {
 		tt.devTty.Close()
+		tt.devTty = nil
 	}
 	return nil
 }

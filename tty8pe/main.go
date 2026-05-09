@@ -30,14 +30,23 @@ func (tt *Tty) SetOnPrefix(f func(string)) (original func(string)) {
 // It also starts a goroutine that listens for terminal resize notifications.
 // The goroutine receives events from go-tty's SIGWINCH channel and,
 // if onResize is not nil, invokes the provided callback function.
-func (tt *Tty) Open(onResize func(width, height int)) error {
-	var err error
-	tt.TTY, err = tty.Open()
-	if err != nil {
-		return err
+func (tt *Tty) Open(onResize func(width, height int)) (err error) {
+	defer func() {
+		if err != nil {
+			tt.Close()
+		}
+	}()
+
+	if tt.TTY == nil {
+		tt.TTY, err = tty.Open()
+		if err != nil {
+			return
+		}
 	}
-	tt.stopNotice, err = tty8base.Notice(tt.TTY, onResize)
-	return err
+	if tt.stopNotice == nil {
+		tt.stopNotice, err = tty8base.Notice(tt.TTY, onResize)
+	}
+	return
 }
 
 func getKeys(tty *tty.TTY, onPrefix func(string)) ([]string, error) {
@@ -95,14 +104,14 @@ func (tt *Tty) GetKey() (key string, err error) {
 // It clears internal references (by overwriting them with nil) to prevent
 // reuse. Since go-tty closes the SIGWINCH channel, the goroutine started
 // by Open detects the channel closure and terminates automatically.
-func (tt *Tty) Close() error {
+func (tt *Tty) Close() (err error) {
 	if tt.TTY != nil {
-		tt.TTY.Close()
+		err = tt.TTY.Close()
 		tt.TTY = nil
 	}
 	if tt.stopNotice != nil {
 		tt.stopNotice()
 		tt.stopNotice = nil
 	}
-	return nil
+	return
 }
