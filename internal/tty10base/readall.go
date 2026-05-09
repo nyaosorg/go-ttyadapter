@@ -1,4 +1,4 @@
-package device
+package tty10base
 
 import (
 	"os"

@@ -6,7 +6,7 @@ import (
 
 	"golang.org/x/term"
 
-	"github.com/nyaosorg/go-ttyadapter/internal/device"
+	"github.com/nyaosorg/go-ttyadapter/internal/tty10base"
 	"github.com/nyaosorg/go-ttyadapter/internal/virtualterminal"
 	"github.com/nyaosorg/go-ttyadapter/internal/winch10"
 )
@@ -25,7 +25,7 @@ func (tt *Tty) fd() int {
 func (tt *Tty) Open(onResize func(int, int)) error {
 	var err error
 
-	tt.devTty, err = os.OpenFile(device.TtyPath, os.O_RDWR, 0666)
+	tt.devTty, err = os.OpenFile(tty10base.TtyPath, os.O_RDWR, 0666)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func (tt *Tty) Open(onResize func(int, int)) error {
 
 func (tt *Tty) GetKey() (key string, err error) {
 	if len(tt.buf) <= 0 {
-		tt.buf, err = device.ReadAllInRawMode(tt.devTty)
+		tt.buf, err = tty10base.ReadAllInRawMode(tt.devTty)
 		if err != nil || len(tt.buf) <= 0 {
 			return
 		}

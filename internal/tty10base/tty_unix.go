@@ -1,5 +1,5 @@
 //go:build !windows
 
-package device
+package tty10base
 
 const TtyPath = "/dev/tty"
