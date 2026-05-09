@@ -6,9 +6,7 @@ import (
 
 	"golang.org/x/term"
 
-	"github.com/nyaosorg/go-ttyadapter/internal/device"
-	"github.com/nyaosorg/go-ttyadapter/internal/virtualterminal"
-	"github.com/nyaosorg/go-ttyadapter/internal/winch10"
+	"github.com/nyaosorg/go-ttyadapter/internal/tty10base"
 )
 
 type Tty struct {
@@ -25,18 +23,18 @@ func (tt *Tty) fd() int {
 func (tt *Tty) Open(onResize func(int, int)) error {
 	var err error
 
-	tt.devTty, err = os.OpenFile(device.TtyPath, os.O_RDWR, 0666)
+	tt.devTty, err = os.OpenFile(tty10base.TtyPath, os.O_RDWR, 0666)
 	if err != nil {
 		return err
 	}
 
-	tt.disable, err = virtualterminal.Enable(tt.fd())
+	tt.disable, err = tty10base.EnableVirtualTerminal(tt.fd())
 	if err != nil {
 		return err
 	}
 
 	if onResize != nil {
-		tt.cancel, err = winch10.Notice(onResize)
+		tt.cancel, err = tty10base.Notice(onResize)
 		return err
 	}
 	return nil
@@ -44,7 +42,7 @@ func (tt *Tty) Open(onResize func(int, int)) error {
 
 func (tt *Tty) GetKey() (key string, err error) {
 	if len(tt.buf) <= 0 {
-		tt.buf, err = device.ReadAllInRawMode(tt.devTty)
+		tt.buf, err = tty10base.ReadAllInRawMode(tt.devTty)
 		if err != nil || len(tt.buf) <= 0 {
 			return
 		}

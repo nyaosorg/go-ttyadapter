@@ -3,8 +3,7 @@ package tty8pe
 import (
 	"github.com/mattn/go-tty"
 
-	"github.com/nyaosorg/go-ttyadapter/internal/unsurrogate"
-	"github.com/nyaosorg/go-ttyadapter/internal/winch8"
+	"github.com/nyaosorg/go-ttyadapter/internal/tty8base"
 )
 
 // Tty is a wrapper around github.com/mattn/go-tty.
@@ -37,7 +36,7 @@ func (tt *Tty) Open(onResize func(width, height int)) error {
 	if err != nil {
 		return err
 	}
-	tt.stopNotice, err = winch8.Notice(tt.TTY, onResize)
+	tt.stopNotice, err = tty8base.Notice(tt.TTY, onResize)
 	return err
 }
 
@@ -46,7 +45,7 @@ func getKeys(tty *tty.TTY, onPrefix func(string)) ([]string, error) {
 
 	var key string
 	for {
-		r, err := unsurrogate.ReadRune(tty.ReadRune)
+		r, err := tty8base.ReadRune(tty.ReadRune)
 		if err != nil {
 			return nil, err
 		}
