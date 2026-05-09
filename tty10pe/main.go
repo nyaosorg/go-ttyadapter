@@ -7,7 +7,6 @@ import (
 	"golang.org/x/term"
 
 	"github.com/nyaosorg/go-ttyadapter/internal/tty10base"
-	"github.com/nyaosorg/go-ttyadapter/internal/virtualterminal"
 )
 
 type Tty struct {
@@ -36,7 +35,7 @@ func (tt *Tty) Open(onResize func(int, int)) error {
 		return err
 	}
 
-	tt.disable, err = virtualterminal.Enable(tt.fd())
+	tt.disable, err = tty10base.EnableVirtualTerminal(tt.fd())
 	if err != nil {
 		return err
 	}
