@@ -2,6 +2,10 @@ Changelog
 =========
 ( English | [Japanese](./CHANGELOG_ja.md) )
 
+v0.6.3
+------
+May 9, 2026
+
 - tty8, tty8pe: Add retry logic on EAGAIN/EWOULDBLOCK errors. Since go-tty v0.0.8, the terminal fd is set to non-blocking mode, which can cause read operations to return EAGAIN instead of blocking (notably on macOS). This change makes tty8 and tty8pe resilient against such errors without requiring a specific version of go-tty. (#21)
 
 v0.6.2
