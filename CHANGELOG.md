@@ -2,6 +2,10 @@ Changelog
 =========
 ( English | [Japanese](./CHANGELOG_ja.md) )
 
+v0.7.0
+------
+May 10, 2026
+
 - Refactor internal packages into "tty8base" and "tty10base" (#23)
 - Improve Open/Close state management (#24)
   - Allow safe re-open after Close

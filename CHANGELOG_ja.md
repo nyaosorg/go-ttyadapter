@@ -2,13 +2,16 @@ Changelog
 =========
 ( [English](./CHANGELOG.md) | Japanese )
 
+v0.7.0
+------
+May 10, 2026
+
 - 数あった細かい internalパッケージを "tty8base" と "tty10base" へ統合 (#23)
 - Open/Close 処理の改善 (#24)
   - 二重に Open した場合、何もしないようにした。
   - Open に失敗した時、中途半端な Open 状態にしないよう、すでに Open 的処理をした個別フィールドに対して Close 処理を施すようにした。
   - Close する時、処理済みのフィールドは nil クリアするようにした（再 Open 時にそのフィールドが再 Open が必要なことが分かるように）
 - IsOpen メソッドを Tty の interface と実装に追加 (#25)
-
 
 v0.6.3
 ------
