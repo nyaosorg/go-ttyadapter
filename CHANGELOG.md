@@ -2,6 +2,12 @@ Changelog
 =========
 ( English | [Japanese](./CHANGELOG_ja.md) )
 
+- Refactor internal packages into "tty8base" and "tty10base" (#23)
+- Improve Open/Close state management (#24)
+  - Allow safe re-open after Close
+  - Prevent partial open state on Open failure
+  - Make Open idempotent
+
 v0.6.3
 ------
 May 9, 2026
