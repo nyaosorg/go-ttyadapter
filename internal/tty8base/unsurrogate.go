@@ -1,4 +1,4 @@
-package unsurrogate
+package tty8base
 
 import (
 	"errors"
