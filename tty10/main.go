@@ -8,7 +8,6 @@ import (
 
 	"github.com/nyaosorg/go-ttyadapter/internal/tty10base"
 	"github.com/nyaosorg/go-ttyadapter/internal/virtualterminal"
-	"github.com/nyaosorg/go-ttyadapter/internal/winch10"
 )
 
 type Tty struct {
@@ -36,7 +35,7 @@ func (tt *Tty) Open(onResize func(int, int)) error {
 	}
 
 	if onResize != nil {
-		tt.cancel, err = winch10.Notice(onResize)
+		tt.cancel, err = tty10base.Notice(onResize)
 		return err
 	}
 	return nil

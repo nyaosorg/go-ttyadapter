@@ -1,6 +1,6 @@
 //go:build !windows
 
-package winch10
+package tty10base
 
 import (
 	"context"

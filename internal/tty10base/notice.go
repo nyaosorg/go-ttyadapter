@@ -1,4 +1,4 @@
-package winch10
+package tty10base
 
 import (
 	"os"
